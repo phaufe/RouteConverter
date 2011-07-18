@@ -26,27 +26,7 @@ import slash.common.io.ISO8601;
 import slash.common.io.Transfer;
 import slash.navigation.base.RouteCharacteristics;
 import slash.navigation.googlemaps.GoogleMapsPosition;
-import slash.navigation.kml.binding22.AbstractContainerType;
-import slash.navigation.kml.binding22.AbstractFeatureType;
-import slash.navigation.kml.binding22.AbstractGeometryType;
-import slash.navigation.kml.binding22.AbstractTimePrimitiveType;
-import slash.navigation.kml.binding22.DocumentType;
-import slash.navigation.kml.binding22.FolderType;
-import slash.navigation.kml.binding22.KmlType;
-import slash.navigation.kml.binding22.LineStringType;
-import slash.navigation.kml.binding22.LineStyleType;
-import slash.navigation.kml.binding22.LinkType;
-import slash.navigation.kml.binding22.MultiGeometryType;
-import slash.navigation.kml.binding22.NetworkLinkType;
-import slash.navigation.kml.binding22.ObjectFactory;
-import slash.navigation.kml.binding22.PlacemarkType;
-import slash.navigation.kml.binding22.PointType;
-import slash.navigation.kml.binding22.ScreenOverlayType;
-import slash.navigation.kml.binding22.StyleType;
-import slash.navigation.kml.binding22.TimeSpanType;
-import slash.navigation.kml.binding22.TimeStampType;
-import slash.navigation.kml.binding22.UnitsEnumType;
-import slash.navigation.kml.binding22.Vec2Type;
+import slash.navigation.kml.binding22.*;
 import slash.navigation.kml.binding22gx.TrackType;
 import slash.navigation.kml.bindingatom.Link;
 import slash.navigation.util.Bearing;
@@ -588,9 +568,22 @@ public class Kml22Format extends KmlFormat {
         return styleType;
     }
 
+    private KmlType recycleKmlType(KmlRoute route) {
+        KmlType kmlType = route.getOrigin(KmlType.class);
+        if (kmlType != null) {
+            //kmlType.getRte().clear();
+            // TODO kmlType.getTrk().clear();
+            //kmlType.getWpt().clear();
+        }
+        return kmlType;
+    }
+
     private KmlType createKmlType(KmlRoute route) {
         ObjectFactory objectFactory = new ObjectFactory();
-        KmlType kmlType = objectFactory.createKmlType();
+
+        KmlType kmlType = recycleKmlType(route);
+        if (kmlType == null)
+            kmlType = objectFactory.createKmlType();
         DocumentType documentType = objectFactory.createDocumentType();
         kmlType.setAbstractFeatureGroup(objectFactory.createDocument(documentType));
         documentType.setName(createDocumentName(route));

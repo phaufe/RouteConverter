@@ -30,9 +30,26 @@ import slash.common.io.CompactCalendar;
  */
 
 public class KmlPosition extends Wgs84Position {
+    private Object origin;
 
     public KmlPosition(Double longitude, Double latitude, Double elevation, Double speed, CompactCalendar time, String comment) {
         super(longitude, latitude, elevation, speed, time, comment);
+    }
+
+    public KmlPosition(Double longitude, Double latitude, Double elevation, Double speed, CompactCalendar time, String comment, Object origin) {
+        this(longitude, latitude, elevation, speed, time, comment);
+        this.origin = origin;
+    }
+
+    public /* for tests */ Object getOrigin() {
+        return origin;
+    }
+
+    public <T> T getOrigin(Class<T> resultClass) {
+        if (resultClass.isInstance(origin))
+            return resultClass.cast(origin);
+        else
+            return null;
     }
 
     public KmlPosition asKmlPosition() {
@@ -42,7 +59,6 @@ public class KmlPosition extends Wgs84Position {
     public KmlPosition asKmzPosition() {
         return asKmlPosition();
     }
-
 
     public boolean equals(Object o) {
         if (this == o) return true;

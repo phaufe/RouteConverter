@@ -51,6 +51,7 @@ import slash.navigation.wbt.WintecWbt201Tk2Format;
 import slash.navigation.wbt.WintecWbt202TesFormat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -63,13 +64,16 @@ public class KmlRoute extends BaseRoute<KmlPosition, BaseKmlFormat> {
     private String name;
     private final List<String> description;
     private final List<KmlPosition> positions;
+    private final List<Object> origins;
 
     public KmlRoute(BaseKmlFormat format, RouteCharacteristics characteristics,
-                    String name, List<String> description, List<KmlPosition> positions) {
+                    String name, List<String> description, List<KmlPosition> positions,
+                    Object... origins) {
         super(format, characteristics);
         this.name = name;
         this.description = description;
         this.positions = positions;
+        this.origins = Arrays.asList(origins);
     }
 
     public String getName() {
@@ -90,6 +94,19 @@ public class KmlRoute extends BaseRoute<KmlPosition, BaseKmlFormat> {
 
     public int getPositionCount() {
         return positions.size();
+    }
+
+    public/* for tests */ List<Object> getOrigins() {
+        return origins;
+    }
+
+    @SuppressWarnings({"unchecked"})
+    public <T> T getOrigin(Class<T> resultClass) {
+        for (Object origin : origins) {
+            if (resultClass.isInstance(origin))
+                return (T) origin;
+        }
+        return null;
     }
 
     public void add(int index, KmlPosition position) {
