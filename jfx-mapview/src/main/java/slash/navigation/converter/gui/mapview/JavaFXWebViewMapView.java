@@ -36,6 +36,7 @@ import java.util.logging.Logger;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.Math.max;
+import static java.lang.System.currentTimeMillis;
 import static javafx.application.Platform.isFxApplicationThread;
 import static javafx.application.Platform.runLater;
 import static javafx.concurrent.Worker.State;
@@ -44,7 +45,8 @@ import static slash.common.io.Externalization.extractFile;
 import static slash.common.io.Transfer.parseDouble;
 
 /**
- * Implementation for a component that displays the positions of a position list on a map.
+ * Implementation for a component that displays the positions of a position list on a map
+ * using the JavaFX WebView.
  *
  * @author Christian Pesch
  */
@@ -52,7 +54,7 @@ import static slash.common.io.Transfer.parseDouble;
 public class JavaFXWebViewMapView extends BaseMapView {
     private static final Logger log = Logger.getLogger(JavaFXWebViewMapView.class.getName());
     private static final String GOOGLE_MAPS_SERVER_PREFERENCE = "mapServer";  // TODO push up?
-    private static final String DEBUG_PREFERENCE = "debug";
+    private static final String DEBUG_PREFERENCE = "debug"; // TODO push up?
 
     private JFXPanel panel;
     private WebView webView;
@@ -82,7 +84,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
         }
     }
 
-    private boolean loadWebPage() {
+    private boolean loadWebPage() { // TODO unify with EclipseSWTMapView?
         try {
             final String language = Locale.getDefault().getLanguage().toLowerCase();
             final String country = Locale.getDefault().getCountry().toLowerCase();
@@ -108,7 +110,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
 
             final String url = html.toURI().toURL().toExternalForm();
             webView.getEngine().load(url);
-            log.fine(System.currentTimeMillis() + " loadWebPage thread " + Thread.currentThread());
+            log.fine(currentTimeMillis() + " loadWebPage thread " + Thread.currentThread());
         } catch (Throwable t) {
             log.severe("Cannot create WebBrowser: " + t.getMessage());
             setInitializationCause(t);
@@ -132,7 +134,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
                     public void changed(ObservableValue<? extends State> observableValue, State oldState, State newState) {
                         // log.fine("WebView changed observableValue " + observableValue + " oldState " + oldState + " newState " + newState + " thread " + Thread.currentThread());
                         if (newState == SUCCEEDED) {
-                            tryToInitialize(startCount++, System.currentTimeMillis());
+                            tryToInitialize(startCount++, currentTimeMillis());
                         }
                     }
                 });
@@ -143,7 +145,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
         });
     }
 
-    private void tryToInitialize(int count, long start) {
+    private void tryToInitialize(int count, long start) { // TODO unify with EclipseSWTMapView?
         boolean initialized = getComponent() != null && isMapInitialized();
         synchronized (this) {
             this.initialized = initialized;
@@ -153,7 +155,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
         if (isInitialized()) {
             runBrowserInteractionCallbacksAndTests(start);
         } else {
-            long end = System.currentTimeMillis();
+            long end = currentTimeMillis();
             int timeout = count++ * 100;
             if (timeout > 3000)
                 timeout = 3000;
@@ -168,15 +170,15 @@ public class JavaFXWebViewMapView extends BaseMapView {
         }
     }
 
-    private void runBrowserInteractionCallbacksAndTests(long start) { // TODO push up
-        long end = System.currentTimeMillis();
+    private void runBrowserInteractionCallbacksAndTests(long start) { // TODO push up?
+        long end = currentTimeMillis();
         log.fine("Starting browser interaction, callbacks and tests after " + (end - start) + " ms");
         initializeAfterLoading();
         initializeBrowserInteraction();
         initializeCallbackListener();
         checkLocalhostResolution();
         checkCallback();
-        end = System.currentTimeMillis();
+        end = currentTimeMillis();
         log.fine("Browser interaction is running after " + (end - start) + " ms");
     }
 
@@ -194,7 +196,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
 
     private boolean hasBeenResizedToInvisible = false;
 
-    public void resize() {
+    public void resize() { // TODO unify with EclipseSWTMapView?
         if (!isInitialized() || !getComponent().isShowing())
             return;
 
@@ -218,7 +220,7 @@ public class JavaFXWebViewMapView extends BaseMapView {
             int width = max(getComponent().getWidth(), 0);
             int height = max(getComponent().getHeight(), 0);
             if (width != lastWidth || height != lastHeight) {
-                ;// executeScript("resize(" + width + "," + height + ");");
+                executeScript("resize(" + width + "," + height + ");");
             }
             lastWidth = width;
             lastHeight = height;
@@ -244,9 +246,13 @@ public class JavaFXWebViewMapView extends BaseMapView {
         return zoom != null ? zoom.intValue() : null;
     }
 
+    protected String getCallbacks() {
+        return executeScriptWithResult("getCallbacks();");
+    }
+
     // script execution
 
-    protected void executeScript(final String script) { // unify with executeScriptWithResult?
+    protected void executeScript(final String script) {
         if (webView == null || script.length() == 0)
             return;
 
