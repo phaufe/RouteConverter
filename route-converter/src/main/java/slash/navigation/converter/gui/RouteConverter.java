@@ -56,7 +56,6 @@ import slash.navigation.converter.gui.helper.ShowProfileMenu;
 import slash.navigation.converter.gui.helper.SinglePositionAugmenter;
 import slash.navigation.converter.gui.helper.UndoMenuSynchronizer;
 import slash.navigation.converter.gui.mapview.EclipseSWTMapView;
-import slash.navigation.converter.gui.mapview.JavaFXWebViewMapView;
 import slash.navigation.converter.gui.mapview.MapView;
 import slash.navigation.converter.gui.mapview.MapViewListener;
 import slash.navigation.converter.gui.mapview.TravelMode;
@@ -320,10 +319,8 @@ public class RouteConverter extends SingleFrameApplication {
 
         if (isJavaFX()) {
             try {
-                // mapView = (MapView) Class.forName("slash.navigation.converter.gui.mapview.JavaFXWebViewMapView").newInstance();
-                mapView = new JavaFXWebViewMapView();
+                mapView = (MapView) Class.forName("slash.navigation.converter.gui.mapview.JavaFXWebViewMapView").newInstance();
             } catch (Exception e) {
-                e.printStackTrace();
                 log.severe("Cannot create JavaFXWebViewMapView: " + e.getMessage());
             }
         }

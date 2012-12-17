@@ -128,6 +128,8 @@ public class JavaFXWebViewMapView extends BaseMapView {
                 if (webView == null)
                     return;
 
+                log.info("Using JavaFX WebView to create map view");
+
                 webView.getEngine().getLoadWorker().stateProperty().addListener(new ChangeListener<State>() {
                     private int startCount = 0;
 
