@@ -326,7 +326,7 @@ public class RouteConverter extends SingleFrameApplication {
             try {
                 mapView = (MapView) Class.forName("slash.navigation.converter.gui.mapview.JavaFXWebViewMapView").newInstance();
             } catch (Exception e) {
-                log.severe("Cannot create JavaFXWebViewMapView: " + e.getMessage());
+                log.severe("Cannot create JavaFXWebViewMapView: " + e);
             }
         }
         if (mapView == null)
@@ -830,7 +830,7 @@ public class RouteConverter extends SingleFrameApplication {
         profileSplitPane.setOneTouchExpandable(true);
         profileSplitPane.setOrientation(0);
         profileSplitPane.setResizeWeight(0.0);
-        contentPane.add(profileSplitPane, new GridConstraints(0, 0, 1, 1, ANCHOR_CENTER, FILL_BOTH, SIZEPOLICY_CAN_SHRINK | SIZEPOLICY_CAN_GROW, SIZEPOLICY_CAN_SHRINK | SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        contentPane.add(profileSplitPane, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         mapSplitPane = new JSplitPane();
         mapSplitPane.setContinuousLayout(true);
         mapSplitPane.setDividerLocation(341);
