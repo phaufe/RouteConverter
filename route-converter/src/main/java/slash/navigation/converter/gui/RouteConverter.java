@@ -55,7 +55,6 @@ import slash.navigation.converter.gui.helper.RouteServiceOperator;
 import slash.navigation.converter.gui.helper.ShowProfileMenu;
 import slash.navigation.converter.gui.helper.SinglePositionAugmenter;
 import slash.navigation.converter.gui.helper.UndoMenuSynchronizer;
-import slash.navigation.converter.gui.mapview.EclipseSWTMapView;
 import slash.navigation.converter.gui.mapview.MapView;
 import slash.navigation.converter.gui.mapview.MapViewListener;
 import slash.navigation.converter.gui.mapview.TravelMode;
@@ -322,16 +321,11 @@ public class RouteConverter extends SingleFrameApplication {
 
         openFrame();
 
-        if (isJavaFX()) {
-            try {
-                mapView = (MapView) Class.forName("slash.navigation.converter.gui.mapview.JavaFXWebViewMapView").newInstance();
-            } catch (Exception e) {
-                log.severe("Cannot create JavaFXWebViewMapView: " + e);
-            }
-        }
+        if (isJavaFX())
+            mapView = createMapView("slash.navigation.converter.gui.mapview.JavaFXWebViewMapView");
         if (mapView == null)
-            mapView = new EclipseSWTMapView();
-        if (mapView.isSupportedPlatform()) {
+            mapView = createMapView("slash.navigation.converter.gui.mapview.EclipseSWTMapView");
+        if (mapView != null && mapView.isSupportedPlatform()) {
             mapPanel.setVisible(true);
             openMapView();
         } else {
@@ -342,6 +336,16 @@ public class RouteConverter extends SingleFrameApplication {
         initializeRouteConverterServices();
         initializeActions();
         initializePreferences(preferences);
+    }
+
+    private MapView createMapView(String className) {
+        try {
+            return (MapView) Class.forName(className).newInstance();
+        } catch (Exception e) {
+            log.severe("Cannot create " + className + ": " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     private void openFrame() {
