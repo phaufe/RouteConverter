@@ -27,5 +27,16 @@
             <artifactId>navigation-formats</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <!--suppress MavenModelInspection -->
+            <groupId>com.oracle</groupId>
+            <!--suppress MavenModelInspection -->
+            <artifactId>javafx</artifactId>
+            <!--suppress MavenModelInspection -->
+            <version>2.0</version>
+            <!--suppress MavenModelInspection -->
+            <systemPath>${java.home}/lib/jfxrt.jar</systemPath>
+            <scope>system</scope>
+        </dependency>
     </dependencies>
 </project>
